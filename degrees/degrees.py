@@ -1,5 +1,6 @@
 import csv
 import sys
+import time
 
 from util import Node, StackFrontier, QueueFrontier
 
@@ -69,6 +70,9 @@ def main():
     if target is None:
         sys.exit("Person not found.")
 
+    # Timer - Start
+    start_time = time.perf_counter()
+
     path = shortest_path(source, target)
 
     if path is None:
@@ -83,6 +87,10 @@ def main():
             movie = movies[path[i + 1][0]]["title"]
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
+    # Timer - End
+    end_time = time.perf_counter()
+    print(f"Calculation time: {end_time - start_time:1f} seconds")
+
 
 def shortest_path(source, target):
     """
@@ -92,29 +100,49 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
-    # TODO //
-
-    # Keep track of number of states explored
-
     # Initialize frontier to just the starting position
+    start = Node(source, parent=None, action=None)
+    frontier = QueueFrontier()
+    frontier.add(start)
+
+    # Breath-First Search (BFS)
+    # QueueFrontier - first-in first-out data type
 
     # Initialize an empty explored set
+    explored = set()
 
     # Keep looping until solution found
-    # while True:
+    while True:
 
-         # If nothing left in frontier, then no path
+        # If nothing left in frontier, then no path
+        if frontier.empty():
+            return None
 
-         # Choose a node from the frontier
+        # Choose a node from the frontier
+        node = frontier.remove()
 
         # If node is the goal, then we have a solution
+        if node.state == target:
+            path = []
+            parent = node.parent
+            while node.parent is not None:
+                path.append((node.action, node.state))
+                node = parent
+                parent = node.parent
+            return path[::-1]
 
-    # Mark node as explored
+        # Neighbours
+        actions = neighbors_for_person(node.state)
 
-    # Add neighbors to frontier
+        # Mark node as explored
+        explored.add(node.state)
 
-    raise NotImplementedError
-
+        # Add neighbors to frontier
+        for action, state in actions:
+            if state not in explored:
+                child = Node(state=state, parent=node, action=action)
+                frontier.add(child)
+    
 
 def person_id_for_name(name):
     """
