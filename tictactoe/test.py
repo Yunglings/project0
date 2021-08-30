@@ -1,23 +1,44 @@
-"""
-Tic Tac Toe Player
-"""
-
-import math
+from tictactoe import initial_state
 import copy
 
+# Global Variables
 X = "X"
 O = "O"
 EMPTY = None
 
+initial_user = None
+test_user = None
 
-def initial_state():
-    """
-    Returns starting state of the board.
-    """
-    return [[EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY]]
 
+# Test function
+def main ():
+
+    # Testing boards
+    initial_board = initial_state()
+
+    test_board = [[O, X, O],
+                  [X, X, O],
+                  [O, O, X]]
+
+    # Testing users
+    initial_user = player(initial_board)
+    test_user = player(test_board)
+    moves = actions(test_board)
+
+    print(moves)
+    print(initial_user)
+    print(test_user)
+
+    # Testing action
+    movement = (1, 0)
+
+    # new_board = result(test_board, movement)
+    # print(new_board)
+
+    player_winner = winner(test_board)
+    print(player_winner)
+    state = terminal(test_board)
+    print(state)
 
 def player(board):
     """
@@ -37,7 +58,6 @@ def player(board):
 
 
     # Turns check
-    # Any return value is acceptable if a terminal board is provided as input.
     if turns % 2 == 0:
         return O
     else: 
@@ -61,10 +81,6 @@ def actions(board):
     
     # Move options returned
     return(moves)
-
-    # Possible moves are any cells on the board that do not already have an X or an O in them.
-    # Any return value is acceptable if a terminal board is provided as input.
-
 
 def result(board, action):
     """
@@ -94,7 +110,6 @@ def result(board, action):
             # Removes cell chosen by player and inserts players move 
             deep_copy_board[row][column] = move
             return deep_copy_board
-
 
 def winner(board):
     """
@@ -128,7 +143,6 @@ def winner(board):
     else: 
         return None
 
-
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
@@ -141,11 +155,10 @@ def terminal(board):
         for j in range(3):
             if board[i][j] != EMPTY:
                 turns += 1
-                # checks board to confirm game not tied
+                # checks board state to confirm game not tied
                 if turns == 9:
                     return True
-
-    # Winner check            
+                
     if winner(board) != None:
         return True
     
@@ -153,34 +166,5 @@ def terminal(board):
     else: 
         return False
 
-def utility(board):
-    """
-    Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
-    """
-    # assumed utility will only be called on a board if terminal(board) is True
-    if winner(board) == X:
-        return 1
-    elif winner(board) == O:
-        return -1
-    else: 
-        return 0
-
-
-def minimax(board):
-    """
-    Returns the optimal action for the current player on the board.
-    """
-    # The move returned should be the optimal action (i, j) that is one of the allowable actions on the board. 
-    # If multiple moves are equally optimal, any of those moves is acceptable.
-    
-    # Initialise set
-    moves = set()
-
-    # Max-value state - "X"
-
-    # Min-valve state - "O"
-
-
-    # If the board is a terminal board, the minimax function should return None.
-    if terminal(board) == True:
-        return None
+# Run program
+main()
