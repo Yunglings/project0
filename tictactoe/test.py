@@ -1,5 +1,6 @@
 from tictactoe import initial_state
 import copy
+import math
 
 # Global Variables
 X = "X"
@@ -16,9 +17,9 @@ def main ():
     # Testing boards
     initial_board = initial_state()
 
-    test_board = [[O, X, O],
-                  [X, X, O],
-                  [O, O, X]]
+    test_board = [[X, X, EMPTY],
+                  [EMPTY, O, O],
+                  [EMPTY, EMPTY, O]]
 
     # Testing users
     initial_user = player(initial_board)
@@ -26,7 +27,7 @@ def main ():
     moves = actions(test_board)
 
     print(moves)
-    print(initial_user)
+    # print(initial_user)
     print(test_user)
 
     # Testing action
@@ -35,10 +36,13 @@ def main ():
     # new_board = result(test_board, movement)
     # print(new_board)
 
-    player_winner = winner(test_board)
-    print(player_winner)
-    state = terminal(test_board)
-    print(state)
+    # player_winner = winner(test_board)
+    # print(player_winner)
+    # state = terminal(test_board)
+    # print(state)
+
+    optimal = minimax(test_board)
+    print(optimal)
 
 def player(board):
     """
@@ -165,6 +169,78 @@ def terminal(board):
     # return False if the game is still in progress.
     else: 
         return False
+
+def utility(board):
+    """
+    Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
+    """
+    # assumed utility will only be called on a board if terminal(board) is True
+    if winner(board) == X:
+        return 1
+    elif winner(board) == O:
+        return -1
+    else: 
+        return 0
+
+def minimax(board):
+    """
+    Returns the optimal action for the current player on the board.
+    """
+    # If the board is a terminal board, the minimax function should return None.
+    if terminal(board) == True:
+        return None
+
+    # The move returned should be the optimal action (i, j) that is one of the allowable actions on the board. 
+    # If multiple moves are equally optimal, any of those moves is acceptable.
+
+    # Player check / Highest value for "X"
+    if player(board) == X:
+        v = -math.inf
+        for action in actions(board):
+            a = min_value(result(board, action))
+            if a > v:
+                v = a
+                options = action
+
+    # Player check / Lowest value for "O"
+    else: 
+        v = math.inf
+        for action in actions(board):
+            a = max_value(result(board, action))
+            if a < v:
+                v = a
+                options = action
+
+    return options
+
+def max_value(board):
+    """
+    Returns the optimal action for the max player "X".
+    """
+    # If terminal board is "TRUE"
+    if terminal(board):
+        return utility(board)
+
+    # state max-value
+    v = -math.inf
+    for action in actions(board):
+        v = max(v, min_value(result(board, action)))
+    return v
+
+def min_value(board):
+    """
+    Returns the optimal action for the min player "O".
+    """
+    # If terminal board is "TRUE"
+    if terminal(board):
+        return utility(board)
+
+    # state min-value
+    v = math.inf
+    for action in actions(board):
+        v = min(v, max_value(result(board, action)))
+    return v
+
 
 # Run program
 main()

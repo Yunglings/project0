@@ -170,17 +170,54 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    # The move returned should be the optimal action (i, j) that is one of the allowable actions on the board. 
-    # If multiple moves are equally optimal, any of those moves is acceptable.
-    
-    # Initialise set
-    moves = set()
-
-    # Max-value state - "X"
-
-    # Min-valve state - "O"
-
-
     # If the board is a terminal board, the minimax function should return None.
     if terminal(board) == True:
         return None
+
+    # If multiple moves are equally optimal, any of those moves is acceptable.
+
+    # Player check / Highest value for "X"
+    if player(board) == X:
+        v = -math.inf
+        for action in actions(board):
+            k = min_value(result(board, action))
+            if k > v:
+                v = k
+                options = action
+
+    # Player check / Lowest value for "O"
+    else: 
+        v = math.inf
+        for action in actions(board):
+            k = max_value(result(board, action))
+            if k < v:
+                v = k
+                options = action
+
+    # The move returned should be the optimal action (i, j) that is one of the allowable actions on the board. 
+    return options
+
+def max_value(board):
+    """
+    Returns the optimal action for the max player "X".
+    """
+    if terminal(board):
+        return utility(board)
+        
+    v = -math.inf
+    for action in actions(board):
+        v = max(v, min_value(result(board, action)))
+    return v
+
+def min_value(board):
+    """
+    Returns the optimal action for the min player "O".
+    """
+    if terminal(board):
+        return utility(board)
+
+    v = math.inf
+    for action in actions(board):
+        v = min(v, max_value(result(board, action)))
+    return v
+    
